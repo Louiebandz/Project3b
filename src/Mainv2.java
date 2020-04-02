@@ -14,6 +14,7 @@ public class Mainv2 {
         Person jSalazar = new Person("Jeremy","Salazar",32,"703-654-8411","jSalazarSecurity@gmail.com");
         Admin AdMain = new Admin(jSalazar,"jSalazarAdmin","43d3?ef3$211f35");
         HashMap<String,LoginAccount> Employees = new HashMap<String, LoginAccount>();
+        Employees.put(AdMain.getUserName(),AdMain);
 
         Scanner Input = new Scanner(System.in);
         String user = "";
@@ -32,22 +33,46 @@ public class Mainv2 {
                 if(pass.equalsIgnoreCase("exit")){
                     break;
                 }
-                boolean UserFound = false;
+                boolean UserFound = Employees.containsKey(user);
+                if(UserFound && pass.hashCode() == Employees.get(user).getHashPass()){
+                    CurrentAccount= Employees.get(user);
+                    int CurrentAccess = CurrentAccount.getAccessLevel();
+                    switch(CurrentAccess) {
+                        case 1:
+                            String Choice = "";
+                            while(!Choice.equalsIgnoreCase("Quit")){
+                                System.out.println("Available Options: \n");
+                                
+                            }
 
-                for (int a = 0; a < Employees.size(); a++) {
-                    LoginAccount nxtAct = Employees.get(a);
-                    if ((nxtAct.getUserName().equals(user)) && (nxtAct.getHashPass() == pass.hashCode()) && !nxtAct.getUser().getManager()) {
-                        UserFound = true;
-                        CurrentAssociate = (SalesAssociate) nxtAct;
-                        break;
-                    }
-                    if ((nxtAct.getUserName().equals(user)) && (nxtAct.getHashPass() == pass.hashCode()) && nxtAct.getUser().getManager()) {
-                        UserFound = true;
-                        CurrentManager = (WareHouseManager) nxtAct;
-                        break;
+
+
+                            break;
+                        case 2:
+
+
+
+                            break;
+                        case 3:
+
+
+
+
+                            break;
+                        case 4:
+
+
+
+
+                            break;
                     }
                 }
-                if (!UserFound) {
+
+
+
+
+
+                else{
                     System.err.println("Incorrect Credentials" + "\n");
                 }
             } catch (Exception e) {
