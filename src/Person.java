@@ -10,6 +10,7 @@ public class Person {
     private int Age;
     private String PhoneNumber;
     private String EmailAddress;
+    private String Position;
 
     public Person(String fName, String lName, int age, String pNumber, String email){
         this.FirstName = fName;

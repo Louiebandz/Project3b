@@ -20,7 +20,12 @@ public class Mainv2 {
         Employees.put(AdMain.getUserName(),AdMain);
         fillWarehouse(mainWarehouse);
 
-        FileInputStream 
+        FileInputStream EmployeesIn= new FileInputStream("Employees.txt");
+        Scanner ScanInEmployees = new Scanner (EmployeesIn);
+        while (ScanInEmployees.hasNext()){
+            String nInfo = ScanInEmployees.nextLine();
+
+        }
 
         Scanner Input = new Scanner(System.in);
         String user = "";
