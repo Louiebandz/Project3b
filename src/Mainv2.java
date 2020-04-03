@@ -15,6 +15,9 @@ public class Mainv2 {
         Admin AdMain = new Admin(jSalazar,"jSalazarAdmin","43d3?ef3$211f35");
         HashMap<String,LoginAccount> Employees = new HashMap<String, LoginAccount>();
         Employees.put(AdMain.getUserName(),AdMain);
+        Warehouse mainWarehouse = new Warehouse("MainWareHouse");
+        
+
 
         Scanner Input = new Scanner(System.in);
         String user = "";
@@ -39,14 +42,6 @@ public class Mainv2 {
                     int CurrentAccess = CurrentAccount.getAccessLevel();
                     switch(CurrentAccess) {
                         case 1:
-                            String Choice = "";
-                            while(!Choice.equalsIgnoreCase("Quit")){
-                                System.out.println("Available Options: \n");
-                                
-                            }
-
-
-
                             break;
                         case 2:
 
@@ -54,7 +49,20 @@ public class Mainv2 {
 
                             break;
                         case 3:
+                            String Level3Choice = "";
+                            while(!Level3Choice.equalsIgnoreCase("Logout")){
+                                System.out.println("Available Options: \n"+"DisplayByName: Search for a parts info by name. \n"
+                                + "DisplayByNumber: Search for a parts info by PartNumber. \n" + "Logout: Logout of the current Account. \n"
+                                + "Enter a Choice: ");
+                                Level3Choice = Input.next();
+                                Level3Choice = Level3Choice.toUpperCase();
+                                switch (Level3Choice){
+                                    case "DisplayByName":
+                                        System.out.println("Enter the Part Name: ");
+                                        String pName = Input.next();
 
+                                }
+                            }
 
 
 
