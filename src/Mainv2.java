@@ -11,13 +11,16 @@ import java.util.*;
 
 public class Mainv2 {
     public static void main(String[] args) throws IOException {
+        HashMap<String,LoginAccount> Employees = new HashMap<String, LoginAccount>();
+        Warehouse mainWarehouse = new Warehouse("MainWareHouse");
         Person jSalazar = new Person("Jeremy","Salazar",32,"703-654-8411","jSalazarSecurity@gmail.com");
         Admin AdMain = new Admin(jSalazar,"jSalazarAdmin","43d3?ef3$211f35");
-        HashMap<String,LoginAccount> Employees = new HashMap<String, LoginAccount>();
-        Employees.put(AdMain.getUserName(),AdMain);
-        Warehouse mainWarehouse = new Warehouse("MainWareHouse");
-        
 
+
+        Employees.put(AdMain.getUserName(),AdMain);
+        fillWarehouse(mainWarehouse);
+
+        FileInputStream 
 
         Scanner Input = new Scanner(System.in);
         String user = "";
@@ -61,6 +64,7 @@ public class Mainv2 {
                                         System.out.println("Enter the Part Name: ");
                                         String pName = Input.next();
 
+
                                 }
                             }
 
@@ -95,6 +99,17 @@ public class Mainv2 {
 
         }
         }
+    public static void fillWarehouse(Warehouse current) throws IOException {
+        String fileName = current.getTxtFileName();
+        FileInputStream fileIN = new FileInputStream(fileName);
+        Scanner readLn = new Scanner(fileIN);
+        while(readLn.hasNext()){
+            String nLine = readLn.nextLine();
+            BikePart dbPart = new BikePart(nLine);
+            current.addToInventory(dbPart);
+        }
+        fileIN.close();
+    }
     }
 
 
