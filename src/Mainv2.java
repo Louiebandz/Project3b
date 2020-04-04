@@ -77,19 +77,38 @@ public class Mainv2 {
                                         System.out.println("Enter the Part Name: ");
                                         String pName = Input.next();
                                         if(PartsByName.containsKey(pName)){
-                                            
-
+                                            double pDisplay;
+                                            if(!PartsByName.get(pName).getOnSale()){
+                                                pDisplay = PartsByName.get(pName).getSalesPrice();
+                                            }else{
+                                                pDisplay = PartsByName.get(pName).getPrice();
+                                            }
+                                            System.out.println("\n"+pName+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByName.get(pName).getQuantity());
                                         }else{
                                             System.out.println("Part Not Found \n");
                                         }
-
-
-
+                                        break;
+                                    case "DisplayByNumber":
+                                        System.out.println("Enter the Part Number: ");
+                                        int pNumber = Input.nextInt();
+                                        if(PartsByNumber.containsKey(pNumber)){
+                                            double pDisplay;
+                                            if(!PartsByNumber.get(pNumber).getOnSale()){
+                                                pDisplay = PartsByNumber.get(pNumber).getSalesPrice();
+                                            }else{
+                                                pDisplay = PartsByNumber.get(pNumber).getPrice();
+                                            }
+                                            System.out.println("\n"+pNumber+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByNumber.get(pNumber).getQuantity());
+                                        }else{
+                                            System.out.println("Part Not Found \n");
+                                        }
+                                        break;
+                                    case "LogOut":
+                                        break;
+                                    default:
+                                        System.err.println("\n"+"Invalid Command"+"\n"+"Please Enter Another Choice."+"\n");
                                 }
                             }
-
-
-
                             break;
                         case 4:
 
