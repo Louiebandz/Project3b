@@ -16,10 +16,10 @@ public class Mainv2 {
         Person jSalazar = new Person("Jeremy","Salazar",32,"703-654-8411","jSalazarSecurity@gmail.com");
         Admin AdMain = new Admin(jSalazar,"jSalazarAdmin","43d3?ef3$211f35");
 
-
         Employees.put(AdMain.getUserName(),AdMain);
         fillWarehouse(mainWarehouse);
 
+        //Fill Employees HashMap with those previously created
         FileInputStream EmployeesIn= new FileInputStream("Employees.txt");
         Scanner ScanInEmployees = new Scanner (EmployeesIn);
         while (ScanInEmployees.hasNext()){
@@ -47,6 +47,14 @@ public class Mainv2 {
                 boolean UserFound = Employees.containsKey(user);
                 if(UserFound && pass.hashCode() == Employees.get(user).getHashPass()){
                     CurrentAccount= Employees.get(user);
+                    HashMap <String,BikePart> PartsByName = new HashMap<String,BikePart>();
+                    HashMap <Integer,BikePart> PartsByNumber = new HashMap<Integer,BikePart>();
+                    for(BikePart nxtPart: mainWarehouse.Inventory()){
+                        PartsByName.put(nxtPart.getName(),nxtPart);
+                        PartsByNumber.put(nxtPart.getPartNumber(),nxtPart);
+                    }
+
+
                     int CurrentAccess = CurrentAccount.getAccessLevel();
                     switch(CurrentAccess) {
                         case 1:
@@ -68,6 +76,13 @@ public class Mainv2 {
                                     case "DisplayByName":
                                         System.out.println("Enter the Part Name: ");
                                         String pName = Input.next();
+                                        if(PartsByName.containsKey(pName)){
+                                            
+
+                                        }else{
+                                            System.out.println("Part Not Found \n");
+                                        }
+
 
 
                                 }
