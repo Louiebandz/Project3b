@@ -52,8 +52,6 @@ public class Mainv2 {
                         PartsByName.put(nxtPart.getName(),nxtPart);
                         PartsByNumber.put(nxtPart.getPartNumber(),nxtPart);
                     }
-
-
                     int CurrentAccess = CurrentAccount.getAccessLevel();
                     switch(CurrentAccess) {
                         case 1:
