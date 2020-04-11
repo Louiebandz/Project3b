@@ -13,10 +13,7 @@ public class Mainv2 {
         Warehouse mainWarehouse = new Warehouse("MainWareHouse");
         mainWarehouse.setTxtFileName("WHmain.txt");
         Person jSalazar = new Person("Jeremy","Salazar",32,"703-654-8411","jSalazarSecurity@gmail.com");
-        Person aMendez = new Person("Adrian","Mendez",25,"804-552-6464","MendezAssoc@gmail.com");
         Admin AdMain = new Admin(jSalazar,"jSalazarAdmin","43d3?ef3$211f35");
-        WareHouseManager MendezWHMan = new WareHouseManager(aMendez,"aMendezManager","44634411s");
-        Employees.put(MendezWHMan.getUserName(),MendezWHMan);
         Employees.put(AdMain.getUserName(),AdMain);
         fillWarehouse(mainWarehouse);
 
@@ -188,7 +185,20 @@ public class Mainv2 {
                             }
                             break;
                         case 4:
-                            System.out.println("Dill Pcikle");
+                            String Level4Choice = "";
+                            while(!Level4Choice.equalsIgnoreCase("Logout")) {
+                                System.out.println("Available Options: \n" + "Create: Create a new Employee Account. \n"
+                                        + "Delete: Delete an Employee Account. \n" + "Logout: Logout of the current Account. \n"
+                                        + "Enter a Choice: ");
+                                Level4Choice = Input.next();
+                                Level4Choice = Level4Choice.toUpperCase();
+                                switch (Level4Choice){
+                                    case "CREATE":
+                                        break;
+                                    case "DELETE":
+                                        break;
+                                }
+                            }
 
 
 
