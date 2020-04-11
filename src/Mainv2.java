@@ -13,8 +13,10 @@ public class Mainv2 {
         Warehouse mainWarehouse = new Warehouse("MainWareHouse");
         mainWarehouse.setTxtFileName("WHmain.txt");
         Person jSalazar = new Person("Jeremy","Salazar",32,"703-654-8411","jSalazarSecurity@gmail.com");
+        Person aMendez = new Person("Adrian","Mendez",25,"804-552-6464","MendezAssoc@gmail.com");
         Admin AdMain = new Admin(jSalazar,"jSalazarAdmin","43d3?ef3$211f35");
-
+        WareHouseManager MendezWHMan = new WareHouseManager(aMendez,"aMendezManager","44634411s");
+        Employees.put(MendezWHMan.getUserName(),MendezWHMan);
         Employees.put(AdMain.getUserName(),AdMain);
         fillWarehouse(mainWarehouse);
 
@@ -23,14 +25,13 @@ public class Mainv2 {
         Scanner ScanInEmployees = new Scanner (EmployeesIn);
         while (ScanInEmployees.hasNext()){
             String nInfo = ScanInEmployees.nextLine();
-
         }
 
         Scanner Input = new Scanner(System.in);
         String user = "";
         String pass = "";
         while (!user.equalsIgnoreCase("exit") || !pass.equalsIgnoreCase("exit")) {
-            LoginAccount CurrentAccount = null;
+            LoginAccount CurrentAccount;
             System.out.println("(To Exit, Input: 'EXIT')" + "\n");
             try {
                 System.out.println("Enter UserName: ");
@@ -45,7 +46,7 @@ public class Mainv2 {
                 }
                 boolean UserFound = Employees.containsKey(user);
                 if(UserFound && pass.hashCode() == Employees.get(user).getHashPass()){
-                    CurrentAccount= Employees.get(user);
+                    CurrentAccount = Employees.get(user);
                     HashMap <String,BikePart> PartsByName = new HashMap<String,BikePart>();
                     HashMap <Integer,BikePart> PartsByNumber = new HashMap<Integer,BikePart>();
                     for(BikePart nxtPart: mainWarehouse.Inventory()){
@@ -55,6 +56,7 @@ public class Mainv2 {
                     int CurrentAccess = CurrentAccount.getAccessLevel();
                     switch(CurrentAccess) {
                         case 1:
+
                             break;
                         case 2:
                             String Level2Choice = "";
@@ -180,19 +182,13 @@ public class Mainv2 {
                             }
                             break;
                         case 4:
-
+                            System.out.println("Dill Pcikle");
 
 
 
                             break;
                     }
-                }
-
-
-
-
-
-                else{
+                }else{
                     System.err.println("Incorrect Credentials" + "\n");
                 }
             } catch (Exception e) {
