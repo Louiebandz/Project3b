@@ -47,12 +47,6 @@ public class Mainv2 {
                 boolean UserFound = Employees.containsKey(user);
                 if(UserFound && pass.hashCode() == Employees.get(user).getHashPass()){
                     CurrentAccount = Employees.get(user);
-                    HashMap <String,BikePart> PartsByName = new HashMap<String,BikePart>();
-                    HashMap <Integer,BikePart> PartsByNumber = new HashMap<Integer,BikePart>();
-                    for(BikePart nxtPart: mainWarehouse.Inventory()){
-                        PartsByName.put(nxtPart.getName(),nxtPart);
-                        PartsByNumber.put(nxtPart.getPartNumber(),nxtPart);
-                    }
                     int CurrentAccess = CurrentAccount.getAccessLevel();
                     switch(CurrentAccess) {
                         case 1:
@@ -66,6 +60,12 @@ public class Mainv2 {
                                         +"Read: Read an inventory file. \n" + "Enter a Choice: ");
                                 Level2Choice = Input.next();
                                 Level2Choice = Level2Choice.toUpperCase();
+                                HashMap <String,BikePart> PartsByName = new HashMap<String,BikePart>();
+                                HashMap <Integer,BikePart> PartsByNumber = new HashMap<Integer,BikePart>();
+                                for(BikePart nxtPart: mainWarehouse.Inventory()){
+                                    PartsByName.put(nxtPart.getName(),nxtPart);
+                                    PartsByNumber.put(nxtPart.getPartNumber(),nxtPart);
+                                }
                                 switch (Level2Choice){
                                     case "DISPLAYBYNAME":
                                         System.out.println("Enter the Part Name: ");
@@ -143,6 +143,12 @@ public class Mainv2 {
                                 + "Enter a Choice: ");
                                 Level3Choice = Input.next();
                                 Level3Choice = Level3Choice.toUpperCase();
+                                HashMap <String,BikePart> PartsByName = new HashMap<String,BikePart>();
+                                HashMap <Integer,BikePart> PartsByNumber = new HashMap<Integer,BikePart>();
+                                for(BikePart nxtPart: mainWarehouse.Inventory()){
+                                    PartsByName.put(nxtPart.getName(),nxtPart);
+                                    PartsByNumber.put(nxtPart.getPartNumber(),nxtPart);
+                                }
                                 switch (Level3Choice){
                                     case "DISPLAYBYNAME":
                                         System.out.println("Enter the Part Name: ");
