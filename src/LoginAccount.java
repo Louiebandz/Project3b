@@ -15,6 +15,7 @@ public class LoginAccount {
         this.UserName = uName;
         this.Password = pWord;
         this.HashPass = Password.hashCode();
+        this.AccessLevel = SecAccess;
     }
 
     public String getUserName() {
