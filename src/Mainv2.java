@@ -178,7 +178,7 @@ public class Mainv2 {
                                         }
                                         break;
                                     case "LOGOUT":
-                                        break;
+                                         break;
                                     default:
                                         System.err.println("\n"+"Invalid Command"+"\n"+"Please Enter Another Choice."+"\n");
                                 }
@@ -194,6 +194,39 @@ public class Mainv2 {
                                 Level4Choice = Level4Choice.toUpperCase();
                                 switch (Level4Choice){
                                     case "CREATE":
+                                        boolean newAssociate = false;
+                                        String nEmployeeFN;
+                                        String nEmployeeLN;
+                                        String nEmployeeEmail;
+                                        String nEmployeeUserName;
+                                        String nEmployeePassword;
+                                        int AccessLevel;
+                                        System.out.println("Please Input Correct Information to Add a New Employee:"+ "\n"
+                                            + "First Name, Last Name, Email, Username, Password");
+                                        System.out.println("Enter FirstName: ");
+                                        nEmployeeFN = Input.next();
+                                        System.out.println("Enter LastName: ");
+                                        nEmployeeLN = Input.next();
+                                        System.out.println("Enter Email: ");
+                                        nEmployeeEmail = Input.next();
+                                        System.out.println("Enter UserName: ");
+                                        nEmployeeUserName = Input.next();
+                                        System.out.println("Enter Password: ");
+                                        nEmployeePassword = Input.next();
+
+                                        System.out.println("Enter Access Level: " + "\n"+
+                                                "Office Manager:3, Warehouse Manager:2, Sales Associate:1");
+                                        AccessLevel = Input.nextInt();
+                                        Person newPerson = new Person(nEmployeeFN,nEmployeeLN,0,null,nEmployeeEmail);
+                                        if(AccessLevel == 3){
+                                            OfficeManager newManager = new OfficeManager(newPerson,nEmployeeUserName,nEmployeePassword);
+                                            Employees.put(newManager.getUserName(),newManager);
+                                        }else if(AccessLevel == 2){
+                                            WareHouseManager newWHManager = new WareHouseManager(newPerson,nEmployeeUserName,nEmployeePassword);
+                                            Employees.put(newWHManager.getUserName(),newWHManager);
+                                        }else{
+                                            
+                                        }
                                         break;
                                     case "DELETE":
                                         break;
@@ -210,13 +243,6 @@ public class Mainv2 {
             } catch (Exception e) {
                 System.err.println("Incorrect Input!" + "\n");
             }
-
-
-
-
-
-
-
         }
         }
     public static void fillWarehouse(Warehouse current) throws IOException {
