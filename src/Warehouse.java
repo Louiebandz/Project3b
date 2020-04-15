@@ -8,6 +8,7 @@ public class Warehouse {
     public Warehouse(String name){
         this.WarehouseName = name;
         this.Contents = new ArrayList<BikePart>();
+        this.txtFileName = name+".txt";
     }
     public void addToInventory(BikePart part){
         Contents.add(part);

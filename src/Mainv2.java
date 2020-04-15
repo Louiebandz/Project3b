@@ -24,6 +24,7 @@ public class Mainv2 {
             String nInfo = ScanInEmployees.nextLine();
         }
 
+
         Scanner Input = new Scanner(System.in);
         String user = "";
         String pass = "";
@@ -47,8 +48,146 @@ public class Mainv2 {
                     int CurrentAccess = CurrentAccount.getAccessLevel();
                     switch(CurrentAccess) {
                         case 1:
-
+                            String Level1Choice = "";
+                            while(!Level1Choice.equalsIgnoreCase("Logout")) {
+                                System.out.println("Available Options: \n" + "LoadVan (Transfer): Transfer parts from MainWH to Associate Van \n" +
+                                        "Invoice: Create Sales Van Invoice. \n"+"Logout: Logout of the current Account. \n"+"Enter a Choice: ");
+                                Level1Choice = Input.next();
+                                Level1Choice = Level1Choice.toUpperCase();
+                                switch(Level1Choice) {
+                                    case ("LOADVAN"):
+                                        System.out.println("How many parts would you like to transfer?: \n " +
+                                                "Unique Parts available for transfer: " + mainWarehouse.Inventory().size() + "\n" +
+                                                "Input 'ALL' to move all inventory");
+                                        String Amount = Input.next();
+                                        if (Amount.equalsIgnoreCase("All")) {
+                                            for (BikePart nxtP : mainWarehouse.Inventory()) {
+                                                BikePart nTransfer = new BikePart(nxtP.getInfo());
+                                                nxtP.setQuantity(0);
+                                                boolean tPartFound = false;
+                                                int dIndex = 0;
+                                                for (int j = 0; j < ((SalesAssociate) CurrentAccount).getWH().Inventory().size(); j++) {
+                                                    if (nxtP.getPartNumber() == ((SalesAssociate) CurrentAccount).getWH().Inventory().get(j).getPartNumber()) {
+                                                        tPartFound = true;
+                                                        dIndex = j;
+                                                    }
+                                                }
+                                                if (!tPartFound) {
+                                                    ((SalesAssociate) CurrentAccount).getWH().Inventory().add(nTransfer);
+                                                } else {
+                                                    ((SalesAssociate) CurrentAccount).getWH().Inventory().get(dIndex).setQuantity(nTransfer.getQuantity());
+                                                }
+                                            }
+                                            System.out.println("All parts transfered from " + mainWarehouse.getWarehouseName() + " to " +  CurrentAccount.getUserName()+ " SalesVan" + "\n");
+                                        } else {
+                                            int numAmount = Integer.parseInt(Amount);
+                                            for (int a = 0; a < numAmount; a++) {
+                                                System.out.println("Please enter the PartNumber for the next part you would like to Transfer:");
+                                                int transpNum = Integer.parseInt(Input.next());
+                                                BikePart sourcePart = null;
+                                                BikePart transPart = null;
+                                                boolean tpFound = false;
+                                                for (BikePart nxtPart : mainWarehouse.Inventory()) {
+                                                    if (nxtPart.getPartNumber() == transpNum) {
+                                                        sourcePart = nxtPart;
+                                                        transPart = new BikePart(sourcePart.getInfo());
+                                                        tpFound = true;
+                                                    }
+                                                }
+                                                if (tpFound) {
+                                                    System.out.println("Enter the quantity you would like to Transfer: \n (Parts Available for Transfer: " + transPart.getQuantity() + ")");
+                                                    int transQuant = Input.nextInt();
+                                                    if (transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant) {
+                                                        boolean dpFound = false;
+                                                        int tIndex = 0;
+                                                        for (int h = 0; h < ((SalesAssociate) CurrentAccount).getWH().Inventory().size(); h++) {
+                                                            BikePart nxtP = ((SalesAssociate) CurrentAccount).getWH().Inventory().get(h);
+                                                            if (nxtP.getPartNumber() == transpNum) {
+                                                                dpFound = true;
+                                                                tIndex = h;
+                                                            }
+                                                        }
+                                                        if (dpFound) {
+                                                            ((SalesAssociate) CurrentAccount).getWH().Inventory().get(tIndex).setQuantity(((SalesAssociate) CurrentAccount).getWH().Inventory().get(tIndex).getQuantity() + transQuant);
+                                                        } else {
+                                                            transPart.setQuantity(transQuant);
+                                                            ((SalesAssociate) CurrentAccount).getWH().Inventory().add(transPart);
+                                                        }
+                                                        sourcePart.setQuantity(sourcePart.getQuantity() - transQuant);
+                                                    } else {
+                                                        System.out.println("Quantity exceeds available supply");
+                                                    }
+                                                } else {
+                                                    System.out.println("Part is not available for transfer.");
+                                                }
+                                            }
+                                            System.out.println(numAmount + " Parts Transferred Successfully from "+ mainWarehouse.getWarehouseName()+" to " + CurrentAccount.getUserName() +" SalesVan.");
+                                        }
+                                        break;
+                                    case "INVOICE":
+                                        System.out.println("How many parts would you like to sell?: ");
+                                        String AmountSold = Input.next();
+                                        ArrayList<BikePart> partsSold = new ArrayList<BikePart>();
+                                        if (AmountSold.equalsIgnoreCase("All")) {
+                                            for (BikePart nxtP : ((SalesAssociate) CurrentAccount).getWH().Inventory()) {
+                                                partsSold.add(nxtP);
+                                                nxtP.setQuantity(0);
+                                            }
+                                            System.out.println("All Parts Sold \n");
+                                        } else {
+                                            int numAmount = Integer.parseInt(AmountSold);
+                                            for (int a = 0; a < numAmount; a++) {
+                                                System.out.println("Please enter the PartNumber for the next part you would like to Transfer:");
+                                                int soldpNum = Integer.parseInt(Input.next());
+                                                BikePart sourcePart = null;
+                                                BikePart transPart = null;
+                                                boolean tpFound = false;
+                                                for (BikePart nxtPart : ((SalesAssociate) CurrentAccount).getWH().Inventory()) {
+                                                    if (nxtPart.getPartNumber() == soldpNum) {
+                                                        sourcePart = nxtPart;
+                                                        transPart = new BikePart(sourcePart.getInfo());
+                                                        tpFound = true;
+                                                    }
+                                                }
+                                                if (tpFound) {
+                                                    System.out.println("Enter the quantity you would like to Transfer: \n (Parts Available for Transfer: " + transPart.getQuantity() + ")");
+                                                    int transQuant = Input.nextInt();
+                                                    if (transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant) {
+                                                        boolean dpFound = false;
+                                                        int tIndex = 0;
+                                                        for (int h = 0; h < partsSold.size(); h++) {
+                                                            BikePart nxtP = partsSold.get(h);
+                                                            if (nxtP.getPartNumber() == soldpNum) {
+                                                                dpFound = true;
+                                                                tIndex = h;
+                                                            }
+                                                        }
+                                                        if (dpFound) {
+                                                            partsSold.get(tIndex).setQuantity(partsSold.get(tIndex).getQuantity() + transQuant);
+                                                        } else {
+                                                            transPart.setQuantity(transQuant);
+                                                            partsSold.add(transPart);
+                                                        }
+                                                        sourcePart.setQuantity(sourcePart.getQuantity() - transQuant);
+                                                    } else {
+                                                        System.out.println("Quantity exceeds available supply");
+                                                    }
+                                                } else {
+                                                    System.out.println("Part is not available for transfer.");
+                                                }
+                                            }
+                                        }
+                                        
+                                        break;
+                                    case "LOGOUT":
+                                        break;
+                                    default:
+                                        System.out.println("Incorrect Input, Please input another command." + "\n");
+                                }
+                            }
                             break;
+
+
                         case 2:
                             String Level2Choice = "";
                             while(!Level2Choice.equalsIgnoreCase("Logout")){
@@ -218,23 +357,42 @@ public class Mainv2 {
                                                 "Office Manager:3, Warehouse Manager:2, Sales Associate:1");
                                         AccessLevel = Input.nextInt();
                                         Person newPerson = new Person(nEmployeeFN,nEmployeeLN,0,null,nEmployeeEmail);
-                                        if(AccessLevel == 3){
-                                            OfficeManager newManager = new OfficeManager(newPerson,nEmployeeUserName,nEmployeePassword);
-                                            Employees.put(newManager.getUserName(),newManager);
-                                        }else if(AccessLevel == 2){
-                                            WareHouseManager newWHManager = new WareHouseManager(newPerson,nEmployeeUserName,nEmployeePassword);
-                                            Employees.put(newWHManager.getUserName(),newWHManager);
-                                        }else{
-                                            
+                                        switch (AccessLevel){
+                                            case(3):
+                                                OfficeManager newManager = new OfficeManager(newPerson,nEmployeeUserName,nEmployeePassword);
+                                                Employees.put(newManager.getUserName(),newManager);
+                                                System.out.println("New OfficeManager successfully Added" + "\n");
+                                                break;
+                                            case(2):
+                                                WareHouseManager newWHManager = new WareHouseManager(newPerson,nEmployeeUserName,nEmployeePassword);
+                                                Employees.put(newWHManager.getUserName(),newWHManager);
+                                                System.out.println("New WareHouseManager successfully Added" + "\n");
+                                                break;
+                                            case(1):
+                                                SalesAssociate newSalesAssoc = new SalesAssociate(newPerson, nEmployeeUserName, nEmployeePassword);
+                                                Employees.put(newSalesAssoc.getUserName(), newSalesAssoc);
+                                                System.out.println("New SalesAssociate successfully Added" + "\n");
+                                                break;
+                                            default:
+                                                System.out.println("Incorrect Access Level.");
                                         }
                                         break;
                                     case "DELETE":
+                                        System.out.println("Enter Employee UserName: ");
+                                        String employeeDelete = Input.next();
+                                        while(!Employees.containsKey(employeeDelete)){
+                                            System.out.println("Incorrect Username, please input new UserName: ");
+                                            employeeDelete = Input.next();
+                                        }
+                                        Employees.remove(employeeDelete);
+                                        System.out.println("Employee successfully removed." + "\n");
                                         break;
+                                    case "LOGOUT":
+                                        break;
+                                    default:
+                                        System.out.println("Incorrect Input, Please enter another command." + "\n");
                                 }
                             }
-
-
-
                             break;
                     }
                 }else{
