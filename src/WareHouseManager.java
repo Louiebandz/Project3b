@@ -10,10 +10,6 @@ public class WareHouseManager extends LoginAccount {
 
     public WareHouseManager(Person user, String uName, String pWord) {
         super(user, uName, pWord,2);
-        this.ManagerWH = new Warehouse(smWHname);
-        this.smWHname = user.getLastName() +"WareHouse";
-}
-    public Warehouse getWH(){
-        return this.ManagerWH;
     }
+
 }

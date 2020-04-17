@@ -10,7 +10,8 @@ public class LoginAccount {
     private String Password;
     private int HashPass;
     private int AccessLevel;
-    public LoginAccount(Person user, String uName, String pWord,int SecAccess) {
+
+    public LoginAccount(Person user, String uName, String pWord, int SecAccess) {
         this.User = user;
         this.UserName = uName;
         this.Password = pWord;
@@ -21,17 +22,21 @@ public class LoginAccount {
     public String getUserName() {
         return this.UserName;
     }
-    public Person getUser (){
+
+    public Person getUser() {
         return this.User;
     }
-    public int getHashPass(){
-        return  this.HashPass;
+
+    public int getHashPass() {
+        return this.HashPass;
     }
-    public int getAccessLevel(){
+
+    public int getAccessLevel() {
         return this.AccessLevel;
     }
-    public String getAccountInfo(){
-        return (this.UserName+","+this.Password+","+this.AccessLevel);
+
+    public String getAccountInfo() {
+        return (this.UserName + "," + this.Password + "," + this.AccessLevel);
     }
 }
 

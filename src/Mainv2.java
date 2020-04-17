@@ -24,11 +24,16 @@ public class Mainv2 {
         fillWarehouse(mainWarehouse);
 
         //Fill Employees HashMap with those previously created
+
+        //Make People
         FileInputStream PeopleIn= new FileInputStream("People.txt");
         Scanner ScanInPeople = new Scanner (PeopleIn);
 
+        //Make Employees
         FileInputStream EmployeesIn= new FileInputStream("Employees.txt");
         Scanner ScanInEmployees = new Scanner (EmployeesIn);
+
+        //BuildEmployeeObjects and Return Them
         while (ScanInPeople.hasNext() && ScanInEmployees.hasNext()){
             String personInfo = ScanInPeople.nextLine();
             String[] temp = personInfo.split(",");
@@ -37,17 +42,29 @@ public class Mainv2 {
             String employeeInfo = ScanInEmployees.nextLine();
             String[] temp2 = employeeInfo.split(",");
             LoginAccount nxtAccount = new LoginAccount(nxtPerson,temp2[0],temp2[1],Integer.parseInt(temp2[2]));
-            Employees.put(nxtAccount.getUserName(),nxtAccount);
-            EmployeesList.add(nxtAccount);
-            for(LoginAccount nxtEmp : EmployeesList){
-                if(nxtEmp.getAccessLevel() == 1){
-                    String AssocReturnName = nxtEmp.getUserName()+"SaleVan.txt";
-                    ((SalesAssociate) nxtEmp).getWH().setTxtFileName(AssocReturnName);
-                    fillWarehouse(((SalesAssociate) nxtEmp).getWH());
-                }
+            int ReturnAccess;
+            ReturnAccess = nxtAccount.getAccessLevel();
+            switch(ReturnAccess){
+                case 1:
+                    SalesAssociate AssocReturn = new SalesAssociate(nxtPerson,temp2[0],temp2[1]);
+                    Employees.put(AssocReturn.getUserName(),AssocReturn);
+                    EmployeesList.add(AssocReturn);
+                    String AssocReturnFile = AssocReturn.getUserName()+"Van.txt";
+                    AssocReturn.getWH().setTxtFileName(AssocReturnFile);
+                    ALLWH.add(AssocReturn.getWH());
+                    break;
+                case 2:
+                     WareHouseManager WHManagerReturn = new WareHouseManager(nxtPerson,temp2[0],temp2[1]);
+                     Employees.put(WHManagerReturn.getUserName(),WHManagerReturn);
+                     EmployeesList.add(WHManagerReturn);
+                     break;
+                case 3:
+                    OfficeManager OfficeManagerReturn = new OfficeManager(nxtPerson,temp2[0],temp2[1]);
+                    Employees.put(OfficeManagerReturn.getUserName(),OfficeManagerReturn);
+                    EmployeesList.add(OfficeManagerReturn);
+                    break;
             }
         }
-
 
         Scanner Input = new Scanner(System.in);
         String user = "";

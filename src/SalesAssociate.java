@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Formatter;
 
 /**
  * Luis Maldonado
@@ -11,7 +10,6 @@ import java.util.Formatter;
 public class SalesAssociate extends LoginAccount {
     private String saWHname;
     private Warehouse AssociateWH;
-    private File AssociateVanFile;
 
     public SalesAssociate(Person user, String uName, String pWord) throws FileNotFoundException {
         super(user, uName, pWord,1);
