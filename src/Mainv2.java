@@ -10,20 +10,42 @@ import java.util.*;
 public class Mainv2 {
     public static void main(String[] args) throws IOException {
         HashMap<String,LoginAccount> Employees = new HashMap<String, LoginAccount>();
+        ArrayList<LoginAccount> EmployeesList = new ArrayList<LoginAccount>();
+
         ArrayList<Warehouse> ALLWH = new ArrayList<Warehouse>();
+
         Warehouse mainWarehouse = new Warehouse("MainWareHouse");
         ALLWH.add(mainWarehouse);
         mainWarehouse.setTxtFileName("WHmain.txt");
+
         Person jSalazar = new Person("Jeremy","Salazar",32,"703-654-8411","jSalazarSecurity@gmail.com");
         Admin AdMain = new Admin(jSalazar,"jSalazarAdmin","43d3?ef3$211f35");
         Employees.put(AdMain.getUserName(),AdMain);
         fillWarehouse(mainWarehouse);
 
         //Fill Employees HashMap with those previously created
+        FileInputStream PeopleIn= new FileInputStream("People.txt");
+        Scanner ScanInPeople = new Scanner (PeopleIn);
+
         FileInputStream EmployeesIn= new FileInputStream("Employees.txt");
         Scanner ScanInEmployees = new Scanner (EmployeesIn);
-        while (ScanInEmployees.hasNext()){
-            String nInfo = ScanInEmployees.nextLine();
+        while (ScanInPeople.hasNext() && ScanInEmployees.hasNext()){
+            String personInfo = ScanInPeople.nextLine();
+            String[] temp = personInfo.split(",");
+            Person nxtPerson = new Person(temp[0],temp[1],Integer.parseInt(temp[2]),temp[3],temp[4]);
+
+            String employeeInfo = ScanInEmployees.nextLine();
+            String[] temp2 = employeeInfo.split(",");
+            LoginAccount nxtAccount = new LoginAccount(nxtPerson,temp2[0],temp2[1],Integer.parseInt(temp2[2]));
+            Employees.put(nxtAccount.getUserName(),nxtAccount);
+            EmployeesList.add(nxtAccount);
+            for(LoginAccount nxtEmp : EmployeesList){
+                if(nxtEmp.getAccessLevel() == 1){
+                    String AssocReturnName = nxtEmp.getUserName()+"SaleVan.txt";
+                    ((SalesAssociate) nxtEmp).getWH().setTxtFileName(AssocReturnName);
+                    fillWarehouse(((SalesAssociate) nxtEmp).getWH());
+                }
+            }
         }
 
 
@@ -338,7 +360,6 @@ public class Mainv2 {
                                 Level4Choice = Level4Choice.toUpperCase();
                                 switch (Level4Choice){
                                     case "CREATE":
-                                        boolean newAssociate = false;
                                         String nEmployeeFN;
                                         String nEmployeeLN;
                                         String nEmployeeEmail;
@@ -366,16 +387,19 @@ public class Mainv2 {
                                             case(3):
                                                 OfficeManager newManager = new OfficeManager(newPerson,nEmployeeUserName,nEmployeePassword);
                                                 Employees.put(newManager.getUserName(),newManager);
+                                                EmployeesList.add(newManager);
                                                 System.out.println("New OfficeManager successfully Added" + "\n");
                                                 break;
                                             case(2):
                                                 WareHouseManager newWHManager = new WareHouseManager(newPerson,nEmployeeUserName,nEmployeePassword);
                                                 Employees.put(newWHManager.getUserName(),newWHManager);
+                                                EmployeesList.add(newWHManager);
                                                 System.out.println("New WareHouseManager successfully Added" + "\n");
                                                 break;
                                             case(1):
                                                 SalesAssociate newSalesAssoc = new SalesAssociate(newPerson, nEmployeeUserName, nEmployeePassword);
                                                 Employees.put(newSalesAssoc.getUserName(), newSalesAssoc);
+                                                EmployeesList.add(newSalesAssoc);
                                                 String AssocWHName = newSalesAssoc.getUserName()+"SaleVan.txt";
                                                 newSalesAssoc.getWH().setTxtFileName(AssocWHName);
                                                 ALLWH.add(newSalesAssoc.getWH());
@@ -400,7 +424,21 @@ public class Mainv2 {
                                         break;
                                     case "LOGOUT":
                                         writeTofile(ALLWH);
+                                        File updateEmployees = new File(("Employees.txt"));
+                                        FileWriter employWriter = new FileWriter(updateEmployees);
+                                        PrintWriter employPrintWriter = new PrintWriter(employWriter);
+                                        for(LoginAccount nxtEmployee : EmployeesList){
+                                            employPrintWriter.println(nxtEmployee.getAccountInfo());
+                                        }
+                                        employPrintWriter.close();
 
+                                        File updatePeople = new File(("People.txt"));
+                                        FileWriter PeopleWriter = new FileWriter(updatePeople);
+                                        PrintWriter peoplePrintWriter = new PrintWriter(PeopleWriter);
+                                        for(LoginAccount nxtEmployee : EmployeesList){
+                                            peoplePrintWriter.println(nxtEmployee.getUser().getpersonInfo());
+                                        }
+                                        peoplePrintWriter.close();
                                         break;
                                     default:
                                         System.out.println("Incorrect Input, Please enter another command." + "\n");

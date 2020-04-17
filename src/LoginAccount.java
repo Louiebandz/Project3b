@@ -30,6 +30,9 @@ public class LoginAccount {
     public int getAccessLevel(){
         return this.AccessLevel;
     }
+    public String getAccountInfo(){
+        return (this.UserName+","+this.Password+","+this.AccessLevel);
+    }
 }
 
 

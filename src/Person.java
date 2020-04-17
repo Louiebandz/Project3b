@@ -48,6 +48,9 @@ public class Person {
     public void setEmailAddress(String NewEmail){
         this.EmailAddress = NewEmail;
     }
+    public String getpersonInfo (){
+        return(this.FirstName+","+this.LastName+","+this.Age+","+this.PhoneNumber+","+this.EmailAddress);
+    }
 
 
 
