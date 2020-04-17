@@ -10,7 +10,9 @@ import java.util.*;
 public class Mainv2 {
     public static void main(String[] args) throws IOException {
         HashMap<String,LoginAccount> Employees = new HashMap<String, LoginAccount>();
+        ArrayList<Warehouse> ALLWH = new ArrayList<Warehouse>();
         Warehouse mainWarehouse = new Warehouse("MainWareHouse");
+        ALLWH.add(mainWarehouse);
         mainWarehouse.setTxtFileName("WHmain.txt");
         Person jSalazar = new Person("Jeremy","Salazar",32,"703-654-8411","jSalazarSecurity@gmail.com");
         Admin AdMain = new Admin(jSalazar,"jSalazarAdmin","43d3?ef3$211f35");
@@ -31,7 +33,7 @@ public class Mainv2 {
         while (!user.equalsIgnoreCase("exit") || !pass.equalsIgnoreCase("exit")) {
             LoginAccount CurrentAccount;
             System.out.println("(To Exit, Input: 'EXIT')" + "\n");
-            try {
+
                 System.out.println("Enter UserName: ");
                 user = Input.next();
                 if(user.equalsIgnoreCase("exit")){
@@ -125,7 +127,9 @@ public class Mainv2 {
                                         }
                                         break;
                                     case "INVOICE":
-                                        System.out.println("How many parts would you like to sell?: ");
+                                        System.out.println("How many parts would you like to sell?: \n " +
+                                                "Unique Parts available for transfer: " + mainWarehouse.Inventory().size() + "\n" +
+                                                "Input 'ALL' to move all inventory");
                                         String AmountSold = Input.next();
                                         ArrayList<BikePart> partsSold = new ArrayList<BikePart>();
                                         if (AmountSold.equalsIgnoreCase("All")) {
@@ -133,12 +137,12 @@ public class Mainv2 {
                                                 partsSold.add(nxtP);
                                                 nxtP.setQuantity(0);
                                             }
-                                            System.out.println("All Parts Sold \n");
+                                            System.out.println("All Parts Sold "+"\n");
                                         } else {
                                             int numAmount = Integer.parseInt(AmountSold);
                                             for (int a = 0; a < numAmount; a++) {
                                                 System.out.println("Please enter the PartNumber for the next part you would like to Transfer:");
-                                                int soldpNum = Integer.parseInt(Input.next());
+                                                int soldpNum = Input.nextInt();
                                                 BikePart sourcePart = null;
                                                 BikePart transPart = null;
                                                 boolean tpFound = false;
@@ -177,9 +181,10 @@ public class Mainv2 {
                                                 }
                                             }
                                         }
-                                        
+
                                         break;
                                     case "LOGOUT":
+                                        writeTofile(ALLWH);
                                         break;
                                     default:
                                         System.out.println("Incorrect Input, Please input another command." + "\n");
@@ -371,6 +376,12 @@ public class Mainv2 {
                                             case(1):
                                                 SalesAssociate newSalesAssoc = new SalesAssociate(newPerson, nEmployeeUserName, nEmployeePassword);
                                                 Employees.put(newSalesAssoc.getUserName(), newSalesAssoc);
+                                                String AssocWHName = newSalesAssoc.getUserName()+"SaleVan.txt";
+                                                newSalesAssoc.getWH().setTxtFileName(AssocWHName);
+                                                ALLWH.add(newSalesAssoc.getWH());
+                                                final Formatter x;
+                                                x = new Formatter(newSalesAssoc.getWH().getTxtFileName());
+                                                x.close();
                                                 System.out.println("New SalesAssociate successfully Added" + "\n");
                                                 break;
                                             default:
@@ -388,19 +399,20 @@ public class Mainv2 {
                                         System.out.println("Employee successfully removed." + "\n");
                                         break;
                                     case "LOGOUT":
+                                        writeTofile(ALLWH);
+
                                         break;
                                     default:
                                         System.out.println("Incorrect Input, Please enter another command." + "\n");
                                 }
                             }
                             break;
+                        default:
+                            System.out.println("Incorrect Credentials, Please try again");
                     }
                 }else{
                     System.err.println("Incorrect Credentials" + "\n");
                 }
-            } catch (Exception e) {
-                System.err.println("Incorrect Input!" + "\n");
-            }
         }
         }
     public static void fillWarehouse(Warehouse current) throws IOException {
@@ -413,6 +425,17 @@ public class Mainv2 {
             current.addToInventory(dbPart);
         }
         fileIN.close();
+    }
+    public static void writeTofile(ArrayList<Warehouse> ALLWH) throws IOException {
+        for(Warehouse nxtWrite : ALLWH){
+            File quitOut = new File(nxtWrite.getTxtFileName());
+            FileWriter qWriter = new FileWriter(quitOut);
+            PrintWriter qpWriter = new PrintWriter(qWriter);
+            for(int q = 0; q < nxtWrite.Inventory().size(); q++){
+                qpWriter.println(nxtWrite.Inventory().get(q).getInfo());
+            }
+            qpWriter.close();
+        }
     }
     }
 
