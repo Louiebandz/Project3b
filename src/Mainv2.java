@@ -217,9 +217,18 @@ public class Mainv2 {
                                             }
                                         }
                                         if(makeInvoice){
+
+
                                             System.out.println("Sales Invoice for " + buyer + ", " + calObj.getTime());
-                                            System.out.println(String.format("%16s", "Part Name"+"Part Number"+"Price"+"Sales Price"+"Quantity"+"Total Cost").replace(' ', ' '));
-                                            //System.out.println("Part Name"+"Part Number"+"Price"+"Sales Price"+"Quantity"+"Total Cost");
+
+                                            String header= String.format("%20s","Part Name").replace(' ', ' ') +
+                                                    String.format("%20s","Part Number").replace(' ', ' ') +
+                                                    String.format("%20s","Price").replace(' ', ' ') +
+                                                    String.format("%20s","Sales Price").replace(' ', ' ') +
+                                                    String.format("%20s","Qnty").replace(' ', ' ')+
+                                                    String.format("%20s","Total Cost").replace(' ', ' ');
+                                            System.out.println(header);
+
                                             double GrandTotal = 0;
                                             for(BikePart nextPartSold : partsSold){
                                                 double Total;
@@ -230,18 +239,19 @@ public class Mainv2 {
                                                     Total = nextPartSold.getPrice()*nextPartSold.getQuantity();
                                                     GrandTotal += Total;
                                                 }
-                                                System.out.println(String.format("%16s",nextPartSold.getName()+nextPartSold.getPartNumber()+nextPartSold.getPrice()+nextPartSold.getSalesPrice()+nextPartSold.getQuantity()+Total);
+
+                                                String result= String.format("%20s",nextPartSold.getName()).replace(' ', ' ') +
+                                                        String.format("%20s",nextPartSold.getPartNumber()).replace(' ', ' ') +
+                                                        String.format("%20s",nextPartSold.getPrice()).replace(' ', ' ') +
+                                                        String.format("%20s",nextPartSold.getSalesPrice()).replace(' ', ' ') +
+                                                        String.format("%20s",nextPartSold.getQuantity()).replace(' ', ' ');
+                                                System.out.println(result);
+
                                             }
-                                            System.out.println("Total:                                                                              "+GrandTotal);
+                                            System.out.println("Total:                                                                                                         "+GrandTotal);
                                         }else{
                                             System.out.println("No Parts Available to Sell.");
                                         }
-
-
-
-
-
-
 
                                         break;
                                     case "LOGOUT":
