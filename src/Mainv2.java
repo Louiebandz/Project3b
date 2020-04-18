@@ -4,6 +4,8 @@
 //Luis Maldonado
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -166,73 +168,90 @@ public class Mainv2 {
                                         }
                                         break;
                                     case "INVOICE":
+                                        System.out.println("To whom will the parts be sold? ");
+                                        String buyer = Input.next();
+
+                                        DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+                                        Calendar calObj = Calendar.getInstance();
+                                        dateFormat.format(calObj.getTime());
+
+
                                         System.out.println("How many parts would you like to sell?: \n " +
-                                                "Unique Parts available for transfer: " + mainWarehouse.Inventory().size() + "\n" +
+                                                "Unique Parts available for transfer: " + ((SalesAssociate)CurrentAccount).getWH().Inventory().size() + "\n" +
                                                 "Input 'ALL' to move all inventory");
-                                        String AmountSold = Input.next();
+                                        String amountSold = Input.next();
+
+                                        boolean makeInvoice = false;
                                         ArrayList<BikePart> partsSold = new ArrayList<BikePart>();
-                                        if (AmountSold.equalsIgnoreCase("All")) {
-                                            for (BikePart nxtP : ((SalesAssociate) CurrentAccount).getWH().Inventory()) {
-                                                partsSold.add(nxtP);
-                                                nxtP.setQuantity(0);
+                                        if(amountSold.equalsIgnoreCase("All")){
+                                            for(BikePart nxtPart : ((SalesAssociate)CurrentAccount).getWH().Inventory()){
+                                                BikePart soldPart = new BikePart(nxtPart.getInfo());
+                                                partsSold.add(soldPart);
+                                                nxtPart.setQuantity(0);
                                             }
-                                            System.out.println("All Parts Sold "+"\n");
-                                        } else {
-                                            int numAmount = Integer.parseInt(AmountSold);
-                                            for (int a = 0; a < numAmount; a++) {
-                                                System.out.println("Please enter the PartNumber for the next part you would like to Transfer:");
-                                                int soldpNum = Input.nextInt();
-                                                BikePart sourcePart = null;
-                                                BikePart transPart = null;
-                                                boolean tpFound = false;
-                                                for (BikePart nxtPart : ((SalesAssociate) CurrentAccount).getWH().Inventory()) {
-                                                    if (nxtPart.getPartNumber() == soldpNum) {
-                                                        sourcePart = nxtPart;
-                                                        transPart = new BikePart(sourcePart.getInfo());
-                                                        tpFound = true;
+                                            makeInvoice = true;
+                                        }else{
+                                            int amountSoldInt = Integer.parseInt(amountSold);
+                                            int Counter = 0;
+                                            while(Counter < amountSoldInt){
+                                                System.out.println("Please enter the PartNumber: ");
+                                                int soldPartNumber = Input.nextInt();
+                                                BikePart partToTransfer;
+                                                for(BikePart nextPart : ((SalesAssociate)CurrentAccount).getWH().Inventory()){
+                                                    if(nextPart.getPartNumber() == soldPartNumber){
+                                                        System.out.println("How Many Would You like to transfer: \n" +
+                                                                "Part Quantity: "+ nextPart.getQuantity());
+                                                        int PartsSoldAmount = Input.nextInt();
+                                                        partToTransfer = new BikePart(nextPart.getInfo());
+                                                        partToTransfer.setQuantity(PartsSoldAmount);
+                                                        partsSold.add(partToTransfer);
+                                                        nextPart.setQuantity(nextPart.getQuantity()-PartsSoldAmount);
+                                                    }else{
+                                                        System.out.println("Part Not Available for Transfer.");
                                                     }
                                                 }
-                                                if (tpFound) {
-                                                    System.out.println("Enter the quantity you would like to Transfer: \n (Parts Available for Transfer: " + transPart.getQuantity() + ")");
-                                                    int transQuant = Input.nextInt();
-                                                    if (transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant) {
-                                                        boolean dpFound = false;
-                                                        int tIndex = 0;
-                                                        for (int h = 0; h < partsSold.size(); h++) {
-                                                            BikePart nxtP = partsSold.get(h);
-                                                            if (nxtP.getPartNumber() == soldpNum) {
-                                                                dpFound = true;
-                                                                tIndex = h;
-                                                            }
-                                                        }
-                                                        if (dpFound) {
-                                                            partsSold.get(tIndex).setQuantity(partsSold.get(tIndex).getQuantity() + transQuant);
-                                                        } else {
-                                                            transPart.setQuantity(transQuant);
-                                                            partsSold.add(transPart);
-                                                        }
-                                                        sourcePart.setQuantity(sourcePart.getQuantity() - transQuant);
-                                                    } else {
-                                                        System.out.println("Quantity exceeds available supply");
-                                                    }
-                                                } else {
-                                                    System.out.println("Part is not available for transfer.");
-                                                }
+                                                Counter += 1;
+                                            }
+                                            if(partsSold.size() > 0){
+                                                makeInvoice = true;
                                             }
                                         }
+                                        if(makeInvoice){
+                                            System.out.println("Sales Invoice for " + buyer + ", " + calObj.getTime());
+                                            System.out.println(String.format("%16s", "Part Name"+"Part Number"+"Price"+"Sales Price"+"Quantity"+"Total Cost").replace(' ', ' '));
+                                            //System.out.println("Part Name"+"Part Number"+"Price"+"Sales Price"+"Quantity"+"Total Cost");
+                                            double GrandTotal = 0;
+                                            for(BikePart nextPartSold : partsSold){
+                                                double Total;
+                                                if(nextPartSold.getOnSale()){
+                                                    Total = nextPartSold.getSalesPrice()*nextPartSold.getQuantity();
+                                                    GrandTotal += Total;
+                                                }else{
+                                                    Total = nextPartSold.getPrice()*nextPartSold.getQuantity();
+                                                    GrandTotal += Total;
+                                                }
+                                                System.out.println(String.format("%16s",nextPartSold.getName()+nextPartSold.getPartNumber()+nextPartSold.getPrice()+nextPartSold.getSalesPrice()+nextPartSold.getQuantity()+Total);
+                                            }
+                                            System.out.println("Total:                                                                              "+GrandTotal);
+                                        }else{
+                                            System.out.println("No Parts Available to Sell.");
+                                        }
+
+
+
+
+
+
 
                                         break;
                                     case "LOGOUT":
-                                        writeTofile(ALLWH);
                                         break;
                                     default:
                                         System.out.println("Incorrect Input, Please input another command." + "\n");
                                 }
                             }
                             break;
-
-
-                        case 2:
+                            case 2:
                             String Level2Choice = "";
                             while(!Level2Choice.equalsIgnoreCase("Logout")){
                                 System.out.println("Available Options: \n"+"DisplayByName: Search for a parts info by name. \n"
@@ -440,22 +459,6 @@ public class Mainv2 {
                                         System.out.println("Employee successfully removed." + "\n");
                                         break;
                                     case "LOGOUT":
-                                        writeTofile(ALLWH);
-                                        File updateEmployees = new File(("Employees.txt"));
-                                        FileWriter employWriter = new FileWriter(updateEmployees);
-                                        PrintWriter employPrintWriter = new PrintWriter(employWriter);
-                                        for(LoginAccount nxtEmployee : EmployeesList){
-                                            employPrintWriter.println(nxtEmployee.getAccountInfo());
-                                        }
-                                        employPrintWriter.close();
-
-                                        File updatePeople = new File(("People.txt"));
-                                        FileWriter PeopleWriter = new FileWriter(updatePeople);
-                                        PrintWriter peoplePrintWriter = new PrintWriter(PeopleWriter);
-                                        for(LoginAccount nxtEmployee : EmployeesList){
-                                            peoplePrintWriter.println(nxtEmployee.getUser().getpersonInfo());
-                                        }
-                                        peoplePrintWriter.close();
                                         break;
                                     default:
                                         System.out.println("Incorrect Input, Please enter another command." + "\n");
@@ -469,6 +472,22 @@ public class Mainv2 {
                     System.err.println("Incorrect Credentials" + "\n");
                 }
         }
+        writeTofile(ALLWH);
+        File updateEmployees = new File(("Employees.txt"));
+        FileWriter employWriter = new FileWriter(updateEmployees);
+        PrintWriter employPrintWriter = new PrintWriter(employWriter);
+        for(LoginAccount nxtEmployee : EmployeesList){
+            employPrintWriter.println(nxtEmployee.getAccountInfo());
+        }
+        employPrintWriter.close();
+
+        File updatePeople = new File(("People.txt"));
+        FileWriter PeopleWriter = new FileWriter(updatePeople);
+        PrintWriter peoplePrintWriter = new PrintWriter(PeopleWriter);
+        for(LoginAccount nxtEmployee : EmployeesList){
+            peoplePrintWriter.println(nxtEmployee.getUser().getpersonInfo());
+        }
+        peoplePrintWriter.close();
         }
     public static void fillWarehouse(Warehouse current) throws IOException {
         String fileName = current.getTxtFileName();
