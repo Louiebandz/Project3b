@@ -230,7 +230,7 @@ public class Mainv2 {
                                                     Total = nextPartSold.getPrice()*nextPartSold.getQuantity();
                                                     GrandTotal += Total;
                                                 }
-
+                                                System.out.println(String.format("%16s",nextPartSold.getName()+nextPartSold.getPartNumber()+nextPartSold.getPrice()+nextPartSold.getSalesPrice()+nextPartSold.getQuantity()+Total);
                                             }
                                             System.out.println("Total:                                                                              "+GrandTotal);
                                         }else{
