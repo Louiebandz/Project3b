@@ -21,7 +21,7 @@ public class Mainv2 {
         mainWarehouse.setTxtFileName("WHmain.txt");
 
         Person jSalazar = new Person("Jeremy","Salazar",32,"703-654-8411","jSalazarSecurity@gmail.com");
-        Admin AdMain = new Admin(jSalazar,"jSalazarAdmin","43d3?ef3$211f35");
+        Admin AdMain = new Admin(jSalazar,"admin","nmida");
         Employees.put(AdMain.getUserName(),AdMain);
         fillWarehouse(mainWarehouse);
 
@@ -168,22 +168,31 @@ public class Mainv2 {
                                         }
                                         break;
                                     case "INVOICE":
-                                        System.out.println("To whom will the parts be sold? ");
-                                        String buyer = Input.next();
+                                        boolean makeInvoice = false;
+                                        ArrayList<BikePart> partsSold = new ArrayList<BikePart>();
 
-                                        DateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy");
+                                        System.out.println("To whom will the parts be sold? ");
+                                        String buyer =null;
+                                        if(Input.hasNext()) buyer = Input.nextLine();
+
+                                        System.out.println("Who Will Receive the parts? \n"+
+                                                "(Signer Name + Job Title)");
+                                        String signature;
+                                        signature = Input.nextLine();
+
+                                        DateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
                                         Calendar calObj = Calendar.getInstance();
                                         dateFormat.format(calObj.getTime());
 
 
                                         System.out.println("How many parts would you like to sell?: \n " +
-                                                "Unique Parts available for transfer: " + ((SalesAssociate)CurrentAccount).getWH().Inventory().size() + "\n" +
-                                                "Input 'ALL' to move all inventory");
-                                        String amountSold = Input.next();
+                                                "Unique Parts available for transfer: " + ((SalesAssociate)CurrentAccount).getWH().Inventory().size() +
+                                                "\n Input 'ALL' to move all inventory");
+                                        String amountSold;
+                                        amountSold = Input.nextLine();
 
-                                        boolean makeInvoice = false;
-                                        ArrayList<BikePart> partsSold = new ArrayList<BikePart>();
-                                        if(amountSold.equalsIgnoreCase("All")){
+
+                                        if(amountSold.trim().equalsIgnoreCase("All")){
                                             for(BikePart nxtPart : ((SalesAssociate)CurrentAccount).getWH().Inventory()){
                                                 BikePart soldPart = new BikePart(nxtPart.getInfo());
                                                 partsSold.add(soldPart);
@@ -218,8 +227,13 @@ public class Mainv2 {
                                         }
                                         if(makeInvoice){
                                             System.out.println("Sales Invoice for " + buyer + ", " + calObj.getTime());
-                                            System.out.println(String.format("%16s", "Part Name"+"Part Number"+"Price"+"Sales Price"+"Quantity"+"Total Cost").replace(' ', ' '));
-                                            //System.out.println("Part Name"+"Part Number"+"Price"+"Sales Price"+"Quantity"+"Total Cost");
+                                            String header= String.format("%20s","Part Name").replace(' ', ' ') +
+                                                    String.format("%20s","Part Number").replace(' ', ' ') +
+                                                    String.format("%20s","Price").replace(' ', ' ') +
+                                                    String.format("%20s","Sales Price").replace(' ', ' ') +
+                                                    String.format("%20s","Qnty").replace(' ', ' ')+
+                                                    String.format("%20s","Total Cost").replace(' ', ' ');
+                                            System.out.println(header);
                                             double GrandTotal = 0;
                                             for(BikePart nextPartSold : partsSold){
                                                 double Total;
@@ -230,19 +244,20 @@ public class Mainv2 {
                                                     Total = nextPartSold.getPrice()*nextPartSold.getQuantity();
                                                     GrandTotal += Total;
                                                 }
-                                                System.out.println(String.format("%16s",nextPartSold.getName()+nextPartSold.getPartNumber()+nextPartSold.getPrice()+nextPartSold.getSalesPrice()+nextPartSold.getQuantity()+Total);
+                                                String result= String.format("%20s",nextPartSold.getName()).replace(' ', ' ') +
+                                                        String.format("%20s",nextPartSold.getPartNumber()).replace(' ', ' ') +
+                                                        String.format("%20s",nextPartSold.getPrice()).replace(' ', ' ') +
+                                                        String.format("%20s",nextPartSold.getSalesPrice()).replace(' ', ' ') +
+                                                        String.format("%20s",nextPartSold.getQuantity()).replace(' ', ' ') +
+                                                        String.format("%20s",Total).replace(' ', ' ');
+                                                System.out.println(result);
+
                                             }
-                                            System.out.println("Total:                                                                              "+GrandTotal);
+                                            System.out.println("Total:                                                                                                           "+GrandTotal+"\n");
+                                            System.out.println("\n" + "Recieved by Signature: "+ signature);
                                         }else{
                                             System.out.println("No Parts Available to Sell.");
                                         }
-
-
-
-
-
-
-
                                         break;
                                     case "LOGOUT":
                                         break;
@@ -276,7 +291,7 @@ public class Mainv2 {
                                             }else{
                                                 pDisplay = PartsByName.get(pName).getPrice();
                                             }
-                                            System.out.println("\n"+pName+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByName.get(pName).getQuantity());
+                                            System.out.println("\n"+pName+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByName.get(pName).getQuantity()+"\n");
                                         }else{
                                             System.out.println("Part Not Found \n");
                                         }
@@ -291,7 +306,7 @@ public class Mainv2 {
                                             }else{
                                                 pDisplay = PartsByNumber.get(pNumber).getPrice();
                                             }
-                                            System.out.println("\n"+pNumber+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByNumber.get(pNumber).getQuantity());
+                                            System.out.println("\n"+PartsByNumber.get(pNumber).getName()+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByNumber.get(pNumber).getQuantity()+"\n");
                                         }else{
                                             System.out.println("Part Not Found \n");
                                         }
@@ -323,14 +338,14 @@ public class Mainv2 {
                                             }
                                             System.out.println(inFileName + " was read successfully, \n inventory added to MainWareHouse" + "\n");
                                         } catch (FileNotFoundException e) {
-                                            System.err.println("File does not exist.");
+                                            System.out.println("File does not exist.");
                                             System.out.println("");
                                         }// end of catch FileNotFoundException
                                         break;
                                     case "LOGOUT":
                                         break;
                                     default:
-                                        System.err.println("\n"+"Invalid Command"+"\n"+"Please Enter Another Choice."+"\n");
+                                        System.out.println("\n"+"Invalid Command"+"\n"+"Please Enter Another Choice."+"\n");
                                 }
                             }
                             break;
@@ -359,7 +374,7 @@ public class Mainv2 {
                                             }else{
                                                 pDisplay = PartsByName.get(pName).getPrice();
                                             }
-                                            System.out.println("\n"+pName+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByName.get(pName).getQuantity());
+                                            System.out.println("\n"+pName+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByName.get(pName).getQuantity()+"\n");
                                         }else{
                                             System.out.println("Part Not Found \n");
                                         }
@@ -374,7 +389,7 @@ public class Mainv2 {
                                             }else{
                                                 pDisplay = PartsByNumber.get(pNumber).getPrice();
                                             }
-                                            System.out.println("\n"+pNumber+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByNumber.get(pNumber).getQuantity());
+                                            System.out.println("\n"+PartsByNumber.get(pNumber).getName()+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByNumber.get(pNumber).getQuantity()+"\n");
                                         }else{
                                             System.out.println("Part Not Found \n");
                                         }
@@ -382,7 +397,7 @@ public class Mainv2 {
                                     case "LOGOUT":
                                          break;
                                     default:
-                                        System.err.println("\n"+"Invalid Command"+"\n"+"Please Enter Another Choice."+"\n");
+                                        System.out.println("\n"+"Invalid Command"+"\n"+"Please Enter Another Choice."+"\n");
                                 }
                             }
                             break;
@@ -398,16 +413,22 @@ public class Mainv2 {
                                     case "CREATE":
                                         String nEmployeeFN;
                                         String nEmployeeLN;
+                                        int nEmployeeAge;
+                                        String nEmployeePhone;
                                         String nEmployeeEmail;
                                         String nEmployeeUserName;
                                         String nEmployeePassword;
                                         int AccessLevel;
                                         System.out.println("Please Input Correct Information to Add a New Employee:"+ "\n"
-                                            + "First Name, Last Name, Email, Username, Password");
+                                            + "First Name, Last Name,Age , Email, Username, Password");
                                         System.out.println("Enter FirstName: ");
                                         nEmployeeFN = Input.next();
                                         System.out.println("Enter LastName: ");
                                         nEmployeeLN = Input.next();
+                                        System.out.println("Enter Age: ");
+                                        nEmployeeAge = Input.nextInt();
+                                        System.out.println("Enter Phone Number: ");
+                                        nEmployeePhone = Input.next();
                                         System.out.println("Enter Email: ");
                                         nEmployeeEmail = Input.next();
                                         System.out.println("Enter UserName: ");
@@ -418,7 +439,7 @@ public class Mainv2 {
                                         System.out.println("Enter Access Level: " + "\n"+
                                                 "Office Manager:3, Warehouse Manager:2, Sales Associate:1");
                                         AccessLevel = Input.nextInt();
-                                        Person newPerson = new Person(nEmployeeFN,nEmployeeLN,0,null,nEmployeeEmail);
+                                        Person newPerson = new Person(nEmployeeFN,nEmployeeLN,nEmployeeAge,nEmployeePhone,nEmployeeEmail);
                                         switch (AccessLevel){
                                             case(3):
                                                 OfficeManager newManager = new OfficeManager(newPerson,nEmployeeUserName,nEmployeePassword);
@@ -456,6 +477,11 @@ public class Mainv2 {
                                             employeeDelete = Input.next();
                                         }
                                         Employees.remove(employeeDelete);
+                                        for(int c =0;c < EmployeesList.size();c++){
+                                            if(EmployeesList.get(c).getUserName().equals(employeeDelete)){
+                                                EmployeesList.remove(c);
+                                            }
+                                        }
                                         System.out.println("Employee successfully removed." + "\n");
                                         break;
                                     case "LOGOUT":
@@ -469,7 +495,7 @@ public class Mainv2 {
                             System.out.println("Incorrect Credentials, Please try again");
                     }
                 }else{
-                    System.err.println("Incorrect Credentials" + "\n");
+                    System.out.println("Incorrect Credentials" + "\n");
                 }
         }
         writeTofile(ALLWH);
