@@ -168,28 +168,24 @@ public class Mainv2 {
                                         }
                                         break;
                                     case "INVOICE":
-                                        boolean makeInvoice = false;
-                                        ArrayList<BikePart> partsSold = new ArrayList<BikePart>();
-
-                                        System.out.println("To whom will the parts be sold? ");
-                                        String buyer =null;
-                                        if(Input.hasNext()) buyer = Input.nextLine();
-
-                                        System.out.println("Who Will Receive the parts? \n"+
-                                                "(Signer Name + Job Title)");
-                                        String signature;
-                                        signature = Input.nextLine();
-
                                         DateFormat dateFormat = new SimpleDateFormat("dd MM yyyy");
                                         Calendar calObj = Calendar.getInstance();
                                         dateFormat.format(calObj.getTime());
 
+                                        boolean makeInvoice = false;
+                                        ArrayList<BikePart> partsSold = new ArrayList<BikePart>();
+
+                                        System.out.println("To whom will the parts be sold? ");
+                                        String buyer = Input.next();
+
+                                        System.out.println("Who Will Receive the parts? \n"+
+                                                "(Signer Name + Job Title)");
+                                        String signature = Input.next();
 
                                         System.out.println("How many parts would you like to sell?: \n " +
                                                 "Unique Parts available for transfer: " + ((SalesAssociate)CurrentAccount).getWH().Inventory().size() +
                                                 "\n Input 'ALL' to move all inventory");
-                                        String amountSold;
-                                        amountSold = Input.nextLine();
+                                        String amountSold = Input.next();
 
 
                                         if(amountSold.trim().equalsIgnoreCase("All")){
@@ -254,7 +250,7 @@ public class Mainv2 {
 
                                             }
                                             System.out.println("Total:                                                                                                           "+GrandTotal+"\n");
-                                            System.out.println("\n" + "Recieved by Signature: "+ signature);
+                                            System.out.println("\n" + "Recieved by Signature: "+ signature+"\n");
                                         }else{
                                             System.out.println("No Parts Available to Sell.");
                                         }
