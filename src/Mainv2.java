@@ -3,6 +3,7 @@
 //Ben Hichak
 //Luis Maldonado
 
+
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -51,9 +52,10 @@ public class Mainv2 {
                     SalesAssociate AssocReturn = new SalesAssociate(nxtPerson,temp2[0],temp2[1]);
                     Employees.put(AssocReturn.getUserName(),AssocReturn);
                     EmployeesList.add(AssocReturn);
-                    String AssocReturnFile = AssocReturn.getUserName()+"Van.txt";
+                    String AssocReturnFile = AssocReturn.getUserName()+"SaleVan.txt";
                     AssocReturn.getWH().setTxtFileName(AssocReturnFile);
                     ALLWH.add(AssocReturn.getWH());
+                    fillWarehouse(AssocReturn.getWH());
                     break;
                 case 2:
                      WareHouseManager WHManagerReturn = new WareHouseManager(nxtPerson,temp2[0],temp2[1]);
@@ -292,20 +294,24 @@ public class Mainv2 {
                                             System.out.println("Part Not Found \n");
                                         }
                                         break;
-                                    case "DISPLAYBYNUMBER":
-                                        System.out.println("Enter the Part Number: ");
-                                        int pNumber = Input.nextInt();
-                                        if(PartsByNumber.containsKey(pNumber)){
-                                            double pDisplay;
-                                            if(!PartsByNumber.get(pNumber).getOnSale()){
-                                                pDisplay = PartsByNumber.get(pNumber).getSalesPrice();
-                                            }else{
-                                                pDisplay = PartsByNumber.get(pNumber).getPrice();
-                                            }
-                                            System.out.println("\n"+PartsByNumber.get(pNumber).getName()+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByNumber.get(pNumber).getQuantity()+"\n");
-                                        }else{
-                                            System.out.println("Part Not Found \n");
-                                        }
+                                    case "DISPLAYBYNUMBER" :
+                                       try {
+                                           System.out.println("Enter the Part Number: ");
+                                           int pNumber = Integer.parseInt(Input.next());
+                                           if (PartsByNumber.containsKey(pNumber)) {
+                                               double pDisplay;
+                                               if (!PartsByNumber.get(pNumber).getOnSale()) {
+                                                   pDisplay = PartsByNumber.get(pNumber).getSalesPrice();
+                                               } else {
+                                                   pDisplay = PartsByNumber.get(pNumber).getPrice();
+                                               }
+                                               System.out.println("\n" + PartsByNumber.get(pNumber).getName() + " " + "Cost: " + pDisplay + " " + "Current Quantity: " + PartsByNumber.get(pNumber).getQuantity() + "\n");
+                                           } else {
+                                               System.out.println("Part Not Found \n");
+                                           }
+                                       }catch (Exception e){
+                                           System.out.println("Incorrect Input please input an Integer"+"\n");
+                                       }
                                         break;
                                     case "READ":
                                         try{
@@ -334,8 +340,7 @@ public class Mainv2 {
                                             }
                                             System.out.println(inFileName + " was read successfully, \n inventory added to MainWareHouse" + "\n");
                                         } catch (FileNotFoundException e) {
-                                            System.out.println("File does not exist.");
-                                            System.out.println("");
+                                            System.out.println("File does not exist."+"\n");
                                         }// end of catch FileNotFoundException
                                         break;
                                     case "LOGOUT":
@@ -376,18 +381,22 @@ public class Mainv2 {
                                         }
                                         break;
                                     case "DISPLAYBYNUMBER":
-                                        System.out.println("Enter the Part Number: ");
-                                        int pNumber = Input.nextInt();
-                                        if(PartsByNumber.containsKey(pNumber)){
-                                            double pDisplay;
-                                            if(!PartsByNumber.get(pNumber).getOnSale()){
-                                                pDisplay = PartsByNumber.get(pNumber).getSalesPrice();
-                                            }else{
-                                                pDisplay = PartsByNumber.get(pNumber).getPrice();
+                                        try {
+                                            System.out.println("Enter the Part Number: ");
+                                            int pNumber = Input.nextInt();
+                                            if (PartsByNumber.containsKey(pNumber)) {
+                                                double pDisplay;
+                                                if (!PartsByNumber.get(pNumber).getOnSale()) {
+                                                    pDisplay = PartsByNumber.get(pNumber).getSalesPrice();
+                                                } else {
+                                                    pDisplay = PartsByNumber.get(pNumber).getPrice();
+                                                }
+                                                System.out.println("\n" + PartsByNumber.get(pNumber).getName() + " " + "Cost: " + pDisplay + " " + "Current Quantity: " + PartsByNumber.get(pNumber).getQuantity() + "\n");
+                                            } else {
+                                                System.out.println("Part Not Found \n");
                                             }
-                                            System.out.println("\n"+PartsByNumber.get(pNumber).getName()+" "+"Cost: "+pDisplay+" "+ "Current Quantity: "+PartsByNumber.get(pNumber).getQuantity()+"\n");
-                                        }else{
-                                            System.out.println("Part Not Found \n");
+                                        }catch(Exception e){
+                                            System.out.println("Incorrect input, please input an Integer"+"\n");
                                         }
                                         break;
                                     case "LOGOUT":
@@ -469,16 +478,20 @@ public class Mainv2 {
                                         System.out.println("Enter Employee UserName: ");
                                         String employeeDelete = Input.next();
                                         while(!Employees.containsKey(employeeDelete)){
-                                            System.out.println("Incorrect Username, please input new UserName: ");
+                                            System.out.println("Incorrect Username, please input new UserName: "+"\n"+
+                                                    "or Input 'EXIT' to exit");
                                             employeeDelete = Input.next();
-                                        }
-                                        Employees.remove(employeeDelete);
-                                        for(int c =0;c < EmployeesList.size();c++){
-                                            if(EmployeesList.get(c).getUserName().equals(employeeDelete)){
-                                                EmployeesList.remove(c);
+                                            if(employeeDelete.equalsIgnoreCase("Exit")){
+                                                break;
                                             }
                                         }
-                                        System.out.println("Employee successfully removed." + "\n");
+                                        for(int c =0;c < EmployeesList.size();c++){
+                                            if(EmployeesList.get(c).getUserName().equals(employeeDelete)){
+                                                Employees.remove(employeeDelete);
+                                                EmployeesList.remove(c);
+                                                System.out.println("Employee successfully removed." + "\n");
+                                            }
+                                        }
                                         break;
                                     case "LOGOUT":
                                         break;
@@ -511,6 +524,8 @@ public class Mainv2 {
         }
         peoplePrintWriter.close();
         }
+
+
     public static void fillWarehouse(Warehouse current) throws IOException {
         String fileName = current.getTxtFileName();
         FileInputStream fileIN = new FileInputStream(fileName);
