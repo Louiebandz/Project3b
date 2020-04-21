@@ -26,11 +26,6 @@ public class Mainv2 {
         Admin AdMain = new Admin(jSalazar,"admin","nmida");
         Employees.put(AdMain.getUserName(),AdMain);
         fillWarehouse(mainWarehouse);
-        for(BikePart nxtPart : mainWarehouse.Inventory()){
-            System.out.println(nxtPart.getInfo());
-        }
-
-        //Fill Employees HashMap with those previously created
 
         //Make People
         FileInputStream PeopleIn= new FileInputStream("People.txt");
@@ -145,7 +140,70 @@ public class Mainv2 {
                                             }
                                         //User Enters a number
                                         }else{
-                                            System.out.println("hello world");
+                                            int TransferCounter = 0;
+                                            try {
+                                                int PartsToTransfer = Integer.parseInt(AmountToTransfer);
+                                                for(int t = 0; t < PartsToTransfer; t++){
+                                                    System.out.println("Enter the next PartNumber: ");
+                                                    int nxtPartNumber = Input.nextInt();
+                                                    boolean mainPartFound=false;
+                                                    boolean vanPartFound=false;
+                                                    int mainPartIndex = 0;
+                                                    int vanPartIndex = 0;
+                                                    int TransferAmount = 0;
+                                                    for(int m = 0 ; m < mainWarehouse.Inventory().size();m++){
+                                                        BikePart nxtMainPart = mainWarehouse.Inventory().get(m);
+                                                        if(nxtMainPart.getPartNumber() == nxtPartNumber){
+                                                            mainPartFound = true;
+                                                            if(mainWarehouse.Inventory().get(m).getQuantity() > 0) {
+                                                                mainPartIndex = m;
+                                                                System.out.println("How Many would you like to transfer? "+"\n"+
+                                                                        "Quantity Available: "+mainWarehouse.getPartFromInventory(m).getQuantity());
+                                                                TransferAmount = Input.nextInt();
+                                                                while(TransferAmount > mainWarehouse.getPartFromInventory(m).getQuantity() || TransferAmount == 0){
+                                                                    System.out.println("Incorrect amount, input a new quantity "+"\n"+
+                                                                            "Part Quantity Available: " + mainWarehouse.getPartFromInventory(m).getQuantity());
+                                                                    TransferAmount = Input.nextInt();
+                                                                }
+                                                            }else{
+                                                                System.out.println("No Available Quantity for this part."+"\n");
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                    for(int v = 0 ; v < ((SalesAssociate)CurrentAccount).getWH().Inventory().size();v++){
+                                                        BikePart nxtVanPart = ((SalesAssociate)CurrentAccount).getWH().getPartFromInventory(v);
+                                                        if(nxtVanPart.getPartNumber() == nxtPartNumber){
+                                                            vanPartFound = true;
+                                                            vanPartIndex = v;
+                                                        }
+                                                    }
+                                                    if(!mainPartFound){
+                                                        System.out.println("Part not found."+"\n");
+                                                    }
+                                                    if(mainPartFound && vanPartFound){
+                                                        ((SalesAssociate)CurrentAccount).getWH().getPartFromInventory(vanPartIndex).setQuantity(((SalesAssociate)CurrentAccount).getWH().getPartFromInventory(vanPartIndex).getQuantity() + TransferAmount);
+                                                        mainWarehouse.getPartFromInventory(mainPartIndex).setQuantity(mainWarehouse.getPartFromInventory(mainPartIndex).getQuantity() - TransferAmount);
+                                                        if(TransferAmount > 0){
+                                                            TransferCounter++;
+                                                        }
+                                                    }
+                                                    if(mainPartFound && !vanPartFound){
+                                                        mainWarehouse.getPartFromInventory(mainPartIndex).setQuantity(mainWarehouse.getPartFromInventory(mainPartIndex).getQuantity() - TransferAmount);
+                                                        BikePart newPart = new BikePart(mainWarehouse.getPartFromInventory(mainPartIndex).getInfo());
+                                                        newPart.setQuantity(TransferAmount);
+                                                        ((SalesAssociate)CurrentAccount).getWH().Inventory().add(newPart);
+                                                        TransferCounter++;
+                                                    }
+                                                }
+                                                if(TransferCounter > 0){
+                                                    System.out.println(TransferCounter + " parts trasferred to " + ((SalesAssociate)CurrentAccount).getSaWHname()+"\n");
+                                                }else{
+                                                    System.out.println("No Parts Transferred");
+                                                }
+                                            }catch(Exception e){
+                                                System.out.println("Incorrect Input, Enter an Integer."+"\n");
+                                            }
                                         }
                                         break;
                                     case "INVOICE":
@@ -183,11 +241,16 @@ public class Mainv2 {
                                                 System.out.println("Please enter the PartNumber: ");
                                                 int soldPartNumber = Input.nextInt();
                                                 BikePart partToTransfer;
-                                                for(BikePart nextPart : ((SalesAssociate)CurrentAccount).getWH().Inventory()){
+                                                    BikePart nextPart = ((SalesAssociate)CurrentAccount).getWH().getPartFromInventory(Counter);
                                                     if(nextPart.getPartNumber() == soldPartNumber){
                                                         System.out.println("How Many Would You like to transfer: \n" +
                                                                 "Part Quantity: "+ nextPart.getQuantity());
                                                         int PartsSoldAmount = Input.nextInt();
+                                                        while(PartsSoldAmount == 0 || PartsSoldAmount > nextPart.getQuantity()){
+                                                            System.out.println("Incorrect Amount Input a new Amount."+"\n"+
+                                                                    "Qunatity Available: "+ nextPart.getQuantity());
+                                                            PartsSoldAmount = Input.nextInt();
+                                                        }
                                                         partToTransfer = new BikePart(nextPart.getInfo());
                                                         partToTransfer.setQuantity(PartsSoldAmount);
                                                         partsSold.add(partToTransfer);
@@ -195,15 +258,14 @@ public class Mainv2 {
                                                     }else{
                                                         System.out.println("Part Not Available for Transfer.");
                                                     }
-                                                }
-                                                Counter += 1;
+                                                    Counter += 1;
                                             }
                                             if(partsSold.size() > 0){
                                                 makeInvoice = true;
                                             }
                                         }
                                         if(makeInvoice){
-                                            System.out.println("Sales Invoice for " + buyer + ", " + calObj.getTime());
+                                            System.out.println("\n"+"Sales Invoice for " + buyer + ", " + calObj.getTime());
                                             String header= String.format("%20s","Part Name").replace(' ', ' ') +
                                                     String.format("%20s","Part Number").replace(' ', ' ') +
                                                     String.format("%20s","Price").replace(' ', ' ') +
@@ -233,7 +295,7 @@ public class Mainv2 {
                                             System.out.println("Total:                                                                                                           "+GrandTotal+"\n");
                                             System.out.println("\n" + "Recieved by Signature: "+ signature+"\n");
                                         }else{
-                                            System.out.println("No Parts Available to Sell.");
+                                            System.out.println("No Parts Available to Sell."+"\n");
                                         }
                                         break;
                                     case "LOGOUT":

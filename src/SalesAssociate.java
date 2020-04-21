@@ -14,7 +14,7 @@ public class SalesAssociate extends LoginAccount {
     public SalesAssociate(Person user, String uName, String pWord) throws FileNotFoundException {
         super(user, uName, pWord,1);
         this.AssociateWH = new Warehouse(saWHname);
-        this.saWHname = user.getLastName() + "WareHouse";
+        this.saWHname = user.getLastName() + "SaleVan";
     }
     public Warehouse getWH(){
         return this.AssociateWH;
