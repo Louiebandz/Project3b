@@ -19,5 +19,6 @@ public class SalesAssociate extends LoginAccount {
     public Warehouse getWH(){
         return this.AssociateWH;
     }
+    public String getSaWHname(){return  this.saWHname;}
 
 }

@@ -11,6 +11,7 @@ import java.util.*;
 
 
 public class Mainv2 {
+
     public static void main(String[] args) throws IOException {
         HashMap<String,LoginAccount> Employees = new HashMap<String, LoginAccount>();
         ArrayList<LoginAccount> EmployeesList = new ArrayList<LoginAccount>();
@@ -25,6 +26,9 @@ public class Mainv2 {
         Admin AdMain = new Admin(jSalazar,"admin","nmida");
         Employees.put(AdMain.getUserName(),AdMain);
         fillWarehouse(mainWarehouse);
+        for(BikePart nxtPart : mainWarehouse.Inventory()){
+            System.out.println(nxtPart.getInfo());
+        }
 
         //Fill Employees HashMap with those previously created
 
@@ -104,69 +108,44 @@ public class Mainv2 {
                                         System.out.println("How many parts would you like to transfer?: \n " +
                                                 "Unique Parts available for transfer: " + mainWarehouse.Inventory().size() + "\n" +
                                                 "Input 'ALL' to move all inventory");
-                                        String Amount = Input.next();
-                                        if (Amount.equalsIgnoreCase("All")) {
-                                            for (BikePart nxtP : mainWarehouse.Inventory()) {
-                                                BikePart nTransfer = new BikePart(nxtP.getInfo());
-                                                nxtP.setQuantity(0);
-                                                boolean tPartFound = false;
-                                                int dIndex = 0;
-                                                for (int j = 0; j < ((SalesAssociate) CurrentAccount).getWH().Inventory().size(); j++) {
-                                                    if (nxtP.getPartNumber() == ((SalesAssociate) CurrentAccount).getWH().Inventory().get(j).getPartNumber()) {
-                                                        tPartFound = true;
-                                                        dIndex = j;
+                                        String AmountToTransfer = Input.next();
+                                        //MainWareHouse is Empty
+                                        if(mainWarehouse.Inventory().size() == 0){
+                                            System.out.println("Main WareHouse is empty, No parts to transfer."+ "\n");
+                                            break;
+                                        //User Inputs "ALL"
+                                        }else if(AmountToTransfer.equalsIgnoreCase("All")){
+                                            boolean partstransferred = false;
+                                            for(BikePart nxtPartMain : mainWarehouse.Inventory()){
+                                                if(nxtPartMain.getQuantity() != 0) {
+                                                    partstransferred = true;
+                                                    boolean partFoundVan = false;
+                                                    int partFoundIndex = 0;
+                                                    for (int k = 0; k < ((SalesAssociate) CurrentAccount).getWH().Inventory().size(); k++) {
+                                                        BikePart nxtPartVan = ((SalesAssociate) CurrentAccount).getWH().Inventory().get(k);
+                                                        if (nxtPartMain.getPartNumber() == nxtPartVan.getPartNumber()) {
+                                                            partFoundVan = true;
+                                                            partFoundIndex = k;
+                                                        }
                                                     }
-                                                }
-                                                if (!tPartFound) {
-                                                    ((SalesAssociate) CurrentAccount).getWH().Inventory().add(nTransfer);
-                                                } else {
-                                                    ((SalesAssociate) CurrentAccount).getWH().Inventory().get(dIndex).setQuantity(nTransfer.getQuantity());
+                                                    if(partFoundVan){
+                                                        ((SalesAssociate)CurrentAccount).getWH().Inventory().get(partFoundIndex).setQuantity(((SalesAssociate)CurrentAccount).getWH().Inventory().get(partFoundIndex).getQuantity() + nxtPartMain.getQuantity());
+                                                        nxtPartMain.setQuantity(0);
+                                                    }else{
+                                                        BikePart newPart = new BikePart(nxtPartMain.getInfo());
+                                                        ((SalesAssociate)CurrentAccount).getWH().Inventory().add(newPart);
+                                                        nxtPartMain.setQuantity(0);
+                                                    }
                                                 }
                                             }
-                                            System.out.println("All parts transfered from " + mainWarehouse.getWarehouseName() + " to " +  CurrentAccount.getUserName()+ " SalesVan" + "\n");
-                                        } else {
-                                            int numAmount = Integer.parseInt(Amount);
-                                            for (int a = 0; a < numAmount; a++) {
-                                                System.out.println("Please enter the PartNumber for the next part you would like to Transfer:");
-                                                int transpNum = Integer.parseInt(Input.next());
-                                                BikePart sourcePart = null;
-                                                BikePart transPart = null;
-                                                boolean tpFound = false;
-                                                for (BikePart nxtPart : mainWarehouse.Inventory()) {
-                                                    if (nxtPart.getPartNumber() == transpNum) {
-                                                        sourcePart = nxtPart;
-                                                        transPart = new BikePart(sourcePart.getInfo());
-                                                        tpFound = true;
-                                                    }
-                                                }
-                                                if (tpFound) {
-                                                    System.out.println("Enter the quantity you would like to Transfer: \n (Parts Available for Transfer: " + transPart.getQuantity() + ")");
-                                                    int transQuant = Input.nextInt();
-                                                    if (transPart.getQuantity() > 0 && transPart.getQuantity() >= transQuant) {
-                                                        boolean dpFound = false;
-                                                        int tIndex = 0;
-                                                        for (int h = 0; h < ((SalesAssociate) CurrentAccount).getWH().Inventory().size(); h++) {
-                                                            BikePart nxtP = ((SalesAssociate) CurrentAccount).getWH().Inventory().get(h);
-                                                            if (nxtP.getPartNumber() == transpNum) {
-                                                                dpFound = true;
-                                                                tIndex = h;
-                                                            }
-                                                        }
-                                                        if (dpFound) {
-                                                            ((SalesAssociate) CurrentAccount).getWH().Inventory().get(tIndex).setQuantity(((SalesAssociate) CurrentAccount).getWH().Inventory().get(tIndex).getQuantity() + transQuant);
-                                                        } else {
-                                                            transPart.setQuantity(transQuant);
-                                                            ((SalesAssociate) CurrentAccount).getWH().Inventory().add(transPart);
-                                                        }
-                                                        sourcePart.setQuantity(sourcePart.getQuantity() - transQuant);
-                                                    } else {
-                                                        System.out.println("Quantity exceeds available supply");
-                                                    }
-                                                } else {
-                                                    System.out.println("Part is not available for transfer.");
-                                                }
+                                            if(partstransferred) {
+                                                System.out.println("All Parts Transferred From MainWareHouse to " + ((SalesAssociate) CurrentAccount).getSaWHname()+"\n");
+                                            }else{
+                                                System.out.println("No Parts transferred, None available"+"\n");
                                             }
-                                            System.out.println(numAmount + " Parts Transferred Successfully from "+ mainWarehouse.getWarehouseName()+" to " + CurrentAccount.getUserName() +" SalesVan.");
+                                        //User Enters a number
+                                        }else{
+                                            System.out.println("hello world");
                                         }
                                         break;
                                     case "INVOICE":
